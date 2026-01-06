@@ -1,0 +1,35 @@
+$schema: https://azuremlschemasprod.azureedge.net/latest/commandJob.schema.json
+type: command
+
+name: rampup-monitoring-single
+display_name: rampup-monitoring-single
+
+code: .
+command: >-
+  python train_monitor_template.py
+  --device cuda
+  --max_steps 200
+  --out_dir ./outputs
+  --use_wandb
+
+environment:
+  # 最简单：用官方 curated 基础镜像 + pip 安装（你也可以改成自定义 docker）
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: env.yml
+
+compute: azureml:gpu-cluster
+experiment_name: rampup-monitoring
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+type: command
+name: train-monitor-template
+display_name: train-monitor-template
+description: Minimal command job for train_monitor_template.py
+
+code: .
+command: python train_monitor_template.py --device cpu
+
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: env.yml
+compute: azureml:cpucluster
+experiment_name: rampup-monitoring
